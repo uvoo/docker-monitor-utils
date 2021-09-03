@@ -1,0 +1,26 @@
+{% if os == 'windows' %}
+
+Server={{ ZABBIX_AGENT_SERVER }}
+ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
+Hostname={{hostname}}
+ControlSocket=\\.\pipe\agent.sock
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity={{tlspskidentity}}
+TLSPSKFile=C:\Program Files\Zabbix Agent 2\psk.key
+LogFile=C:\Program Files\Zabbix Agent 2\zabbix_agent2.log
+AllowKey=system.run[get-service]
+AllowKey=system.run[hostname]
+
+
+{% elif os == 'linux' %}
+## LogFile=C:\opt\zabbix\zabbix_agent2.log
+## TLSPSKFile=C:\opt\zabbix\psk.key
+## LogType=system
+## LogType=file
+
+{% else %}
+
+Unsupported OS
+
+{% endif %}
