@@ -290,6 +290,17 @@ def from_csv():
             print(e)
 
 
+def files_from_jinja():
+    targs = {}
+    targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    with open('zabbix_agent2.conf.jinja') as f_:
+        template = Template(f_.read())
+    txt = template.render(targs)
+    with open('downloads/zabbix_agent2.conf', 'w') as f_:
+        f_.write(txt)
+
+
 @app.route('/addhost')
 def addhost():
     acl()
@@ -403,6 +414,7 @@ def download(filename):
 
 
 if __name__ == '__main__':
+    files_from_jinja()
     # app.run(debug=True, host='0.0.0.0', port=33222, ssl_context='adhoc')
     # app.run(debug=True, host='0.0.0.0', port=80, ssl_context='adhoc')
     # app.run(debug=True, host='0.0.0.0', port=8080)
