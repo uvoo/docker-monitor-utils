@@ -45,11 +45,13 @@ userpass = os.environ.get('ZABBIX_USERPASS')
 ZABBIX_URL = os.environ.get('ZABBIX_URL')
 ZABBIX_AGENT_SERVER = os.environ.get('ZABBIX_AGENT_SERVER')
 ZABBIX_AGENT_SERVERACTIVE = os.environ.get('ZABBIX_AGENT_SERVERACTIVE')
-zapi = ZabbixAPI(ZABBIX_URL)
-
-zapi.session.verify = False
-api_auth_token = zapi.login(username, userpass)
-zapi.user.get(userids=-1)
+try:
+    zapi = ZabbixAPI(ZABBIX_URL)
+    zapi.session.verify = False
+    api_auth_token = zapi.login(username, userpass)
+    zapi.user.get(userids=-1)
+except Exception as e:
+    print(e)
 
 
 
@@ -403,5 +405,6 @@ def download(filename):
 if __name__ == '__main__':
     # app.run(debug=True, host='0.0.0.0', port=33222, ssl_context='adhoc')
     # app.run(debug=True, host='0.0.0.0', port=80, ssl_context='adhoc')
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    # app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=80)
     # app.run(debug=True, host='0.0.0.0', port=33222)
