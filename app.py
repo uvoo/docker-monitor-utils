@@ -21,22 +21,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 homedir = str(Path.home())
 app = Flask(__name__)
 
-# with open(homedir + "/.zabbix/config.yaml", 'r') as f:
-#     try:
-#         config = yaml.safe_load(f)
-#     except yaml.YAMLError as e:
-#         print(e)
-# zapi:
-#   url: https://monitor.example.com
-#   username: ""
-#   userpass: ""
-# api:
-#   token: ""
-#   admin_token: ""
-# token = config['api']['token']
-# username = config['zapi']['username']
-# userpass = config['zapi']['userpass']
-# zapi = ZabbixAPI(config['zapi']['url'])
 
 admin_token = os.environ.get('MONITOR_REGISTRATION_ADMIN_TOKEN')
 token = os.environ.get('MONITOR_REGISTRATION_TOKEN')
