@@ -10,7 +10,7 @@ import sys
 import urllib3
 import uuid
 
-from flask import Flask, request, abort, jsonify, send_file, Response, send_from_directory
+from flask import Flask, request, abort, jsonify, send_file, Response, send_from_directory, current_app
 from jinja2 import Template
 import jinja2
 from pyzabbix import ZabbixAPI, ZabbixAPIException
@@ -290,10 +290,11 @@ def from_csv():
             print(e)
 
 
-def files_from_jinja():
+def files_from_jinja(os_="windows"):
     targs = {}
     targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
     targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['os'] = os_ 
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
@@ -354,16 +355,6 @@ def get_os():
     content = request.headers.get('User-Agent')
     return Response(content, mimetype='text/plain')
 
-@app.route('/agent/upgrade')
-def footest_json():
-    j = {}
-    j['foo'] = "one"
-    j['bar'] = "two"
-    j['fee'] = 2 
-    # flask.jsonify(id=str(album.id), title=album.title)
-    # return jsonify(**j)
-    return jsonify(j)
-
 
 @app.route('/wagent/test/version')
 def wagent_test_version():
@@ -395,28 +386,21 @@ def test_json():
     return jsonify(j)
 
 
-# app = Flask(__name__, static_url_path='')
-# @app.route('/getconfig/<path:path>')
-# @app.route('/agentconfig/')
-@app.route('/agent/<path:path>')
-def agentconfig_dir(path):
-    return send_from_directory('agent', path)
+@app.route('/agent/<path:name>')
+def agentconfig_dir(name):
+    agent = os.path.join(current_app.root_path, 'agent')
+    return send_from_directory('agent', name)
 
-# @app.route('/agentdownloads/<path:path>')
-# def agentconfig_dir(path):
-#     return send_from_directory('agentdownloads', path)
-@app.route('/downloads/<path:filename>', methods=['GET', 'POST'])
-def download(filename):
-    # downloads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+
+@app.route('/downloads/<path:name>', methods=['GET', 'POST'])
+def download(name):
+    os_ = request.args.get('os', default='windows', type=str)
+    files_from_jinja(os_)
     downloads = os.path.join(current_app.root_path, 'downloads')
-    return send_from_directory(directory=downloads, filename=filename)
+    return send_from_directory(downloads, name)
 
 
 
 if __name__ == '__main__':
-    files_from_jinja()
     # app.run(debug=True, host='0.0.0.0', port=33222, ssl_context='adhoc')
-    # app.run(debug=True, host='0.0.0.0', port=80, ssl_context='adhoc')
-    # app.run(debug=True, host='0.0.0.0', port=8080)
     app.run(debug=True, host='0.0.0.0', port=80)
-    # app.run(debug=True, host='0.0.0.0', port=33222)
