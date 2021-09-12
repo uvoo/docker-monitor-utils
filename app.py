@@ -29,6 +29,13 @@ userpass = os.environ.get('ZABBIX_USERPASS')
 ZABBIX_URL = os.environ.get('ZABBIX_URL')
 ZABBIX_AGENT_SERVER = os.environ.get('ZABBIX_AGENT_SERVER')
 ZABBIX_AGENT_SERVERACTIVE = os.environ.get('ZABBIX_AGENT_SERVERACTIVE')
+AUTOREGISTRATION_TLSPSKIDENTITY = os.environ.get('AUTOREGISTRATION_TLSPSKIDENTITY')
+AUTOREGISTRATION_TLSPSKVALUE = os.environ.get('AUTOREGISTRATION_TLSPSKVALUE')
+PROXYTOKEN = os.environ.get('PROXYTOKEN')
+DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
+DEFAULT_OS = os.environ.get('DEFAULT_OS', 'linux')
+DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
+# if "DEFAULT_SHEL" in os.environ:
 try:
     zapi = ZabbixAPI(ZABBIX_URL)
     zapi.session.verify = False
@@ -190,6 +197,7 @@ class Host:
         targs['ZABBIX_URL'] = ZABBIX_URL 
         targs['ZABBIX_AGENT_SERVERACTIVE'] = ZABBIX_AGENT_SERVERACTIVE 
         targs['ZABBIX_AGENT_SERVER'] = ZABBIX_AGENT_SERVER 
+        targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
 
         targs['os'] = self.os
         templateLoader = jinja2.FileSystemLoader(searchpath="./")
@@ -274,16 +282,24 @@ def from_csv():
             print(e)
 
 
-def files_from_jinja(os_="windows"):
+def create_agent_config_from_jinja(os_="windows"):
+    hostname = request.args.get("hostname")
+    hostInterfaceItem = request.args.get("dns")
+    required_args = (hostname, hostInterfaceItem)
+    if any(i == None for i in required_args):
+        return "Missing required url args."
+    # ipaddr = request.args.get("ipaddr")
     targs = {}
     targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
     targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
     targs['os'] = os_ 
+    targs['os'] = hostname_ 
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
-    with open('downloads/zabbix_agent2.conf', 'w') as f_:
-        f_.write(txt)
+    with open('downloads/psk.key', 'w') as f_:
+        f_.write(AUTOREGISTRATION_TLSPSKVALUE)
 
 
 @app.route('/addhost')
@@ -378,11 +394,91 @@ def agentconfig_dir(name):
 
 @app.route('/downloads/<path:name>', methods=['GET', 'POST'])
 def download(name):
-    os_ = request.args.get('os', default='windows', type=str)
-    files_from_jinja(os_)
+    # os_ = request.args.get('os', default='windows', type=str)
+    # create_agent_config_from_jinja(os_)
     downloads = os.path.join(current_app.root_path, 'downloads')
     return send_from_directory(downloads, name)
 
+
+@app.route('/get/autoregistration/zabbix_agent2.conf', methods=['GET', 'POST'])
+def get_agent2conf():
+    hostname = request.args.get("hostname")
+    hostInterfaceItem = request.args.get("dns")
+    os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    # required_args = (hostname, hostInterfaceItem, os_)
+    required_args = (os_)
+    if any(i == None for i in required_args):
+        return "Missing required url args."
+    # ipaddr = request.args.get("ipaddr")
+    targs = {}
+    targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
+    targs['os'] = os_ 
+    targs['hostInterfaceItem'] = hostInterfaceItem 
+    with open('zabbix_agent2.conf.jinja') as f_:
+        template = Template(f_.read())
+    txt = template.render(targs)
+    return Response(txt, mimetype='text/plain')
+    # with open('downloads/psk.key', 'w') as f_:
+    #    f_.write(AUTOREGISTRATION_TLSPSKVALUE)
+
+
+@app.route('/get/autoregistration/psk.key', methods=['GET', 'POST'])
+# @app.route('/get/agentdpsk', methods=['GET', 'POST'])
+# @app.route('/get/agent2psk', methods=['GET', 'POST'])
+def get_agentpsk():
+    content = AUTOREGISTRATION_TLSPSKVALUE
+    return Response(content, mimetype='text/plain')
+
+
+@app.route('/get/autoregistration/installZabbixAgent', methods=['GET', 'POST'])
+def getInstallZabbixAgent():
+    shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
+    os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    # required_args = (hostname, hostInterfaceItem, os_)
+    required_args = (shell, os_)
+    if any(i == None for i in required_args):
+        return "Missing required url args."
+    # ipaddr = request.args.get("ipaddr")
+    targs = {}
+    targs['ZABBIX_URL'] = ZABBIX_URL
+    targs['PROXYTOKEN'] = PROXYTOKEN 
+    targs['shell'] = shell 
+    targs['os'] = os_ 
+    with open('installZabbixAgent.jinja') as f_:
+        template = Template(f_.read())
+    txt = template.render(targs)
+    return Response(txt, mimetype='text/plain')
+    # with open('downloads/psk.key', 'w') as f_:
+    #    f_.write(AUTOREGISTRATION_TLSPSKVALUE)
+
+
+@app.route('/get/health', methods=['GET', 'POST'])
+def get_health():
+    return Response("ok", mimetype='text/plain')
+
+@app.route('/get/autoregistration/zabbix_agentd.conf', methods=['GET', 'POST'])
+def get_agentdconf():
+    hostname = request.args.get("hostname")
+    hostInterfaceItem = request.args.get("dns")
+    os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    required_args = (hostname, hostInterfaceItem, os_)
+    if any(i == None for i in required_args):
+        return "Missing required url args."
+    # ipaddr = request.args.get("ipaddr")
+    targs = {}
+    targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
+    targs['os'] = os_ 
+    targs['hostInterfaceItem'] = hostInterfaceItem 
+    with open('zabbix_agentd.conf.jinja') as f_:
+        template = Template(f_.read())
+    txt = template.render(targs)
+    return Response(txt, mimetype='text/plain')
+    # with open('downloads/psk.key', 'w') as f_:
+    #    f_.write(AUTOREGISTRATION_TLSPSKVALUE)
 
 
 if __name__ == '__main__':

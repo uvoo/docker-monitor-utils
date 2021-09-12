@@ -1,23 +1,56 @@
 {% if os == 'windows' %}
 
+HostnameItem=system.hostname[host]
+HostInterfaceItem=zbx.getIpaddr
 Server={{ ZABBIX_AGENT_SERVER }}
 ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
-Hostname={{hostname}}
 ControlSocket=\\.\pipe\agent.sock
+TLSPSKIdentity={{ AUTOREGISTRATION_TLSPSKIDENTITY }}
 TLSConnect=psk
 TLSAccept=psk
-TLSPSKIdentity={{tlspskidentity}}
-TLSPSKFile=C:\Program Files\Zabbix Agent 2\psk.key
-LogFile=C:\Program Files\Zabbix Agent 2\zabbix_agent2.log
-AllowKey=system.run[get-service]
-AllowKey=system.run[hostname]
+TLSPSKFile=C:\app\zabbix\psk.key
+LogFile=C:\app\zabbix\zabbix_agent2.log
+HostMetadata=
+HostMetadataItem=system.uname
+
+UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DEFAULT_DOMAIN }}\""
+UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias "Ethernet*").ifIndex).IPv4Address | Select -First 1"
+UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Invoke-WebRequest -uri "http://api.ipify.org" -UseBasicParsing).Content"
+UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
+
+# Examples
+# AllowKey=system.run[*]
+# DenyKey=system.run[*]
+# AllowKey=system.run[get-service]
+# AllowKey=system.run[hostname]
+# UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -ExecutionPolicy bypass -File "C:\app\zabbix\scripts\getDNS.ps1"
+# HostInterface=myhost.example.com
+# HostInterface=10.x.x.x
 
 
 {% elif os == 'linux' %}
-## LogFile=C:\opt\zabbix\zabbix_agent2.log
-## TLSPSKFile=C:\opt\zabbix\psk.key
-## LogType=system
-## LogType=file
+
+PidFile=/run/zabbix/zabbix_agent2.pid
+LogFile=/var/log/zabbix/zabbix_agent2.log
+LogFileSize=0
+ListenPort=10050
+HostMetadataItem=system.uname
+Include=/etc/zabbix/zabbix_agent2.d/*.conf
+ControlSocket=/tmp/agent.sock
+
+Server={{ ZABBIX_AGENT_SERVER }}
+ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
+Hostname={{ hostname }}
+HostInterfaceItem = {{ hostInterfaceItem }}
+
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity={{ AUTOREGISTRATION_TLSPSKIDENTITY }}
+TLSPSKFile=/etc/zabbix/psk.key
+
+DenyKey=system.run[*]
+AllowKey=system.run[get-service]
+AllowKey=system.run[hostname]
 
 {% else %}
 
