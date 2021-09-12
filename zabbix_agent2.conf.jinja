@@ -30,27 +30,37 @@ UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfil
 
 {% elif os == 'linux' %}
 
+HostnameItem=system.hostname[host]
+HostInterfaceItem = {{ hostInterfaceItem }}
+Server={{ ZABBIX_AGENT_SERVER }}
+ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
+ControlSocket=/tmp/agent.sock
 PidFile=/run/zabbix/zabbix_agent2.pid
 LogFile=/var/log/zabbix/zabbix_agent2.log
 LogFileSize=0
 ListenPort=10050
+HostMetadata=
 HostMetadataItem=system.uname
 Include=/etc/zabbix/zabbix_agent2.d/*.conf
-ControlSocket=/tmp/agent.sock
-
-Server={{ ZABBIX_AGENT_SERVER }}
-ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
-Hostname={{ hostname }}
-HostInterfaceItem = {{ hostInterfaceItem }}
 
 TLSConnect=psk
 TLSAccept=psk
 TLSPSKIdentity={{ AUTOREGISTRATION_TLSPSKIDENTITY }}
 TLSPSKFile=/etc/zabbix/psk.key
 
-DenyKey=system.run[*]
-AllowKey=system.run[get-service]
-AllowKey=system.run[hostname]
+UserParameter=zbx.getDns, bash -c "hostname | awk '{print tolower($0)".{{ DEFAULT_DOMAIN }}"}'" 
+UserParameter=zbx.getIpaddr, bash -c "ip route get 8.8.8.8 | awk -F\"src \" 'NR==1{split(\$2,a,\" \");print a[1]}'"  # https://stackoverflow.com/questions/21336126/linux-bash-script-to-extract-ip-address
+UserParameter=zbx.getPublicIpaddr, bash -c "curl -s https://api.ipify.org"
+UserParameter=zbx.getZabbixAgentVersion, bash -c "/usr/sbin/zabbix_agent2 --version | head -n 1"
+
+# Examples
+# AllowKey=system.run[*]
+# DenyKey=system.run[*]
+# AllowKey=system.run[get-service]
+# AllowKey=system.run[hostname]
+# UserParameter=zbx.getDns,bash "/etc/zabbix/scripts/getDNS.ps1"
+# HostInterface=myhost.example.com
+# HostInterface=10.x.x.x
 
 {% else %}
 
