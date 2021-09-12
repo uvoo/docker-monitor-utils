@@ -33,7 +33,8 @@ curl.exe -kL "https://monitor.dev.example.com:443/monitor-utils/get/autoregistra
 
 Get Installer powershell script and run.
 ```
-(invoke-webrequest -uri "https://monitor.dev.example.com/monitor-utils/get/autoregistration/installZabbixAgent?proxyToken=PROXYTOKEN").Content > install.ps1; powershell -file install.ps1
+$proxyToken=PROXYTOKEN
+(invoke-webrequest -uri "https://monitor.dev.example.com/monitor-utils/get/autoregistration/installZabbixAgent?proxyToken=$proxyToken").Content > install.ps1; powershell -file install.ps1
 ```
 
 Force removal with installer if Zabbix zgent service already exists.
@@ -41,4 +42,9 @@ Force removal with installer if Zabbix zgent service already exists.
 powershell -file install.ps1 -uninstall 1
 ```
 
-## Linux Dev
+## Linux
+
+```
+proxyToken=PROXYTOKEN
+curl "https://monitor.dev.example.com/monitor-utils/get/autoregistration/installZabbixAgent?proxyToken=$proxyToken&os=linux&shell=bash" > install.sh; bash install.sh
+```
