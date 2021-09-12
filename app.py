@@ -404,6 +404,7 @@ def download(name):
 def get_agent2conf():
     shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    DOMAIN = request.args.get('os', default=DEFAULT_DOMAIN, type=str)
     required_args = (os_)
     if any(i == None for i in required_args):
         return "Missing required url args."
@@ -413,6 +414,7 @@ def get_agent2conf():
     targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
     targs['os'] = os_ 
     targs['shell'] = shell 
+    targs['DOMAIN'] = DOMAIN 
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
