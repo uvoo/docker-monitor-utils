@@ -402,26 +402,21 @@ def download(name):
 
 @app.route('/get/autoregistration/zabbix_agent2.conf', methods=['GET', 'POST'])
 def get_agent2conf():
-    hostname = request.args.get("hostname")
-    hostInterfaceItem = request.args.get("dns")
+    shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     os_ = request.args.get('os', default=DEFAULT_OS, type=str)
-    # required_args = (hostname, hostInterfaceItem, os_)
     required_args = (os_)
     if any(i == None for i in required_args):
         return "Missing required url args."
-    # ipaddr = request.args.get("ipaddr")
     targs = {}
-    targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
-    targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
+    targs['ZABBIX_AGENT_SERVERACTIVE'] = ZABBIX_AGENT_SERVERACTIVE 
+    targs['ZABBIX_AGENT_SERVER'] = ZABBIX_AGENT_SERVER 
     targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
     targs['os'] = os_ 
-    targs['hostInterfaceItem'] = hostInterfaceItem 
+    targs['shell'] = shell 
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
     return Response(txt, mimetype='text/plain')
-    # with open('downloads/psk.key', 'w') as f_:
-    #    f_.write(AUTOREGISTRATION_TLSPSKVALUE)
 
 
 @app.route('/get/autoregistration/psk.key', methods=['GET', 'POST'])

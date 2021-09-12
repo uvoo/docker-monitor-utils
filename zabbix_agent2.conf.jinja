@@ -30,7 +30,7 @@ UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfil
 
 {% elif os == 'linux' %}
 
-HostnameItem=system.hostname[host]
+HostnameItem=system.hostname
 HostInterfaceItem = {{ hostInterfaceItem }}
 Server={{ ZABBIX_AGENT_SERVER }}
 ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
