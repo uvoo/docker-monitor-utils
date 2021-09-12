@@ -181,7 +181,8 @@ function main() {
     clean_up
     exit 1
   fi
-  # zabbix_install
+  uninstallZabbix
+  zabbix_install
   updateZabbixFiles
   clean_up
 }
