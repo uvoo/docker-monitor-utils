@@ -63,13 +63,6 @@ tmpdir=$(mktemp -d -t agents-install-XXXXXXXXXX)
 
 
 
-uninstallZabbix(){
-  # sudo apt remove -y --purge zabbix-agent2 || true
-  echo "Uninstalling zabbix-agent2 and release packages."
-  sudo apt-get remove -y zabbix-agent2 zabbix-release
-  echo "Uninstall complete."
-}
-
 # Setup vars depending on Operating System
 if [[ "${ID}" =~ ^(rhel|centos)$ ]]; then
   os_base=redhat
@@ -124,6 +117,13 @@ ubuntu_additional_prep() {
   fi
 }
 
+
+uninstallZabbix(){
+  # sudo apt remove -y --purge zabbix-agent2 || true
+  echo "Uninstalling zabbix-agent2 and release packages."
+  sudo $pkg_app remove -y zabbix-agent2 zabbix-release
+  echo "Uninstall complete."
+}
 
 function zabbix_install() {
   if [[ "${ID}" =~ ^(rhel|centos)$ ]]; then

@@ -31,7 +31,8 @@ UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfil
 {% elif os == 'linux' %}
 
 HostnameItem=system.hostname
-HostInterfaceItem = {{ hostInterfaceItem }}
+HostInterfaceItem=zbx.getIpaddr
+# HostInterfaceItem=zbx.getDns
 Server={{ ZABBIX_AGENT_SERVER }}
 ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
 ControlSocket=/tmp/agent.sock
