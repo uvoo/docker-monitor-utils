@@ -38,6 +38,24 @@ function installZabbix(){
   .\zabbix_agent2.exe -t vm.memory.size[available]
 }
 
+function uninstallZabbix(){
+  try{
+    cd $dir
+    Stop-Service "$svcName"
+    .\zabbix_agent2.exe --uninstall
+    # Stop-Service "$svcName"  -ErrorAction SilentlyContinue
+    # sc.exe stop/delete "$svcName"
+    # C:\app\zabbix\zabbix_agent2.exe --uninstall
+    # .\zabbix_agent2.exe --uninstall --config zabbix_agent2.win.conf
+  }catch{}
+}
+
+if ($uninstall -eq $true) {
+  Write-Output "Uninstalling $svcName if exists"
+  uninstallZabbix
+}
+
+uninstallZabbix
 $r=(getZabbixService)
 if($r -eq $true){
   Write-Host "E: $svcName service exits. Please uninstall first."
