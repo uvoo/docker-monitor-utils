@@ -1,3 +1,7 @@
+Required env vars
+DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL
+
+
 ```
 ./buildpush.sh
 ```
@@ -48,3 +52,10 @@ powershell -file install.ps1 -uninstall 1
 proxyToken=PROXYTOKEN
 curl "https://monitor.dev.example.com/monitor-utils/get/autoregistration/installZabbixAgent?proxyToken=$proxyToken&os=linux&shell=bash" > install.sh; bash install.sh
 ```
+
+Defaults. Please change these by setting environmental varialbes
+- autoregistration--c811d00e-1495-11ec-88fc-3fadeb64ed55
+- b473ce5b17bc1d20e92adc0a3e3f2325674ab3bad3f06946b410347b73f13c79
+```
+```
+

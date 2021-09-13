@@ -29,13 +29,18 @@ userpass = os.environ.get('ZABBIX_USERPASS')
 ZABBIX_URL = os.environ.get('ZABBIX_URL')
 ZABBIX_AGENT_SERVER = os.environ.get('ZABBIX_AGENT_SERVER')
 ZABBIX_AGENT_SERVERACTIVE = os.environ.get('ZABBIX_AGENT_SERVERACTIVE')
-AUTOREGISTRATION_TLSPSKIDENTITY = os.environ.get('AUTOREGISTRATION_TLSPSKIDENTITY')
-AUTOREGISTRATION_TLSPSKVALUE = os.environ.get('AUTOREGISTRATION_TLSPSKVALUE')
-PROXYTOKEN = os.environ.get('PROXYTOKEN')
+AUTOREGISTRATION_TLSPSKIDENTITY = os.environ.get('AUTOREGISTRATION_TLSPSKIDENTITY', 'autoregistration--c811d00e-1495-11ec-88fc-3fadeb64ed55')
+AUTOREGISTRATION_TLSPSKVALUE = os.environ.get('AUTOREGISTRATION_TLSPSKVALUE', 'b473ce5b17bc1d20e92adc0a3e3f2325674ab3bad3f06946b410347b73f13c79')
+PROXYTOKEN = os.environ.get('PROXYTOKEN', "")
 DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
 DEFAULT_OS = os.environ.get('DEFAULT_OS', 'linux')
 DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
-# if "DEFAULT_SHEL" in os.environ:
+required_args = (DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)
+if any(i == None for i in required_args):
+    msg = "E: Missing at least one required environmental variable (DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)" 
+    print(msg)
+    sys.exit()
+
 try:
     zapi = ZabbixAPI(ZABBIX_URL)
     zapi.session.verify = False
@@ -374,15 +379,11 @@ def wagent_test_version():
     return jsonify(r)
 
 
-
 @app.route('/test-sandbox/foo')
 def test_json():
     j = {}
     j['foo'] = "one"
     j['bar'] = "two"
-    j['fee'] = 2 
-    # flask.jsonify(id=str(album.id), title=album.title)
-    # return jsonify(**j)
     return jsonify(j)
 
 
@@ -394,8 +395,6 @@ def agentconfig_dir(name):
 
 @app.route('/downloads/<path:name>', methods=['GET', 'POST'])
 def download(name):
-    # os_ = request.args.get('os', default='windows', type=str)
-    # create_agent_config_from_jinja(os_)
     downloads = os.path.join(current_app.root_path, 'downloads')
     return send_from_directory(downloads, name)
 
@@ -422,8 +421,6 @@ def get_agent2conf():
 
 
 @app.route('/get/autoregistration/psk.key', methods=['GET', 'POST'])
-# @app.route('/get/agentdpsk', methods=['GET', 'POST'])
-# @app.route('/get/agent2psk', methods=['GET', 'POST'])
 def get_agentpsk():
     content = AUTOREGISTRATION_TLSPSKVALUE
     return Response(content, mimetype='text/plain')
@@ -433,11 +430,9 @@ def get_agentpsk():
 def getInstallZabbixAgent():
     shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     os_ = request.args.get('os', default=DEFAULT_OS, type=str)
-    # required_args = (hostname, hostInterfaceItem, os_)
     required_args = (shell, os_)
     if any(i == None for i in required_args):
         return "Missing required url args."
-    # ipaddr = request.args.get("ipaddr")
     targs = {}
     targs['ZABBIX_URL'] = ZABBIX_URL
     targs['PROXYTOKEN'] = PROXYTOKEN 
@@ -447,35 +442,11 @@ def getInstallZabbixAgent():
         template = Template(f_.read())
     txt = template.render(targs)
     return Response(txt, mimetype='text/plain')
-    # with open('downloads/psk.key', 'w') as f_:
-    #    f_.write(AUTOREGISTRATION_TLSPSKVALUE)
 
 
 @app.route('/get/health', methods=['GET', 'POST'])
 def get_health():
     return Response("ok", mimetype='text/plain')
-
-@app.route('/get/autoregistration/zabbix_agentd.conf', methods=['GET', 'POST'])
-def get_agentdconf():
-    hostname = request.args.get("hostname")
-    hostInterfaceItem = request.args.get("dns")
-    os_ = request.args.get('os', default=DEFAULT_OS, type=str)
-    required_args = (hostname, hostInterfaceItem, os_)
-    if any(i == None for i in required_args):
-        return "Missing required url args."
-    # ipaddr = request.args.get("ipaddr")
-    targs = {}
-    targs['ZABBIX_AGENT_SERVERACTIVE'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
-    targs['ZABBIX_AGENT_SERVER'] = os.getenv('ZABBIX_AGENT_SERVERACTIVE')
-    targs['AUTOREGISTRATION_TLSPSKIDENTITY'] = AUTOREGISTRATION_TLSPSKIDENTITY 
-    targs['os'] = os_ 
-    targs['hostInterfaceItem'] = hostInterfaceItem 
-    with open('zabbix_agentd.conf.jinja') as f_:
-        template = Template(f_.read())
-    txt = template.render(targs)
-    return Response(txt, mimetype='text/plain')
-    # with open('downloads/psk.key', 'w') as f_:
-    #    f_.write(AUTOREGISTRATION_TLSPSKVALUE)
 
 
 if __name__ == '__main__':
