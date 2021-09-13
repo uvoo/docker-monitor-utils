@@ -35,6 +35,10 @@ PROXYTOKEN = os.environ.get('PROXYTOKEN', "")
 DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
 DEFAULT_OS = os.environ.get('DEFAULT_OS', 'linux')
 DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
+# ZABBIX_AGENT_WINDIR = os.environ.get('ZABBIX_AGENT_DIR', 'C:\opt\zabbix')
+# ZABBIX_AGENT_NIXDIR = os.environ.get('ZABBIX_AGENT_DIR', '/opt/zabbix')
+# APPLICATIONS_WINDIR = os.environ.get('APPLICATIONS_WINDIR', 'C:\opt')
+# APPLICATIONS_NIXDIR = os.environ.get('APPLICATIONS_NIXDIR', '/opt')
 required_args = (DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)
 if any(i == None for i in required_args):
     msg = "E: Missing at least one required environmental variable (DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)" 
@@ -303,8 +307,8 @@ def create_agent_config_from_jinja(os_="windows"):
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
-    with open('downloads/psk.key', 'w') as f_:
-        f_.write(AUTOREGISTRATION_TLSPSKVALUE)
+    # with open('downloads/psk.key', 'w') as f_:
+    #     f_.write(AUTOREGISTRATION_TLSPSKVALUE)
 
 
 @app.route('/addhost')

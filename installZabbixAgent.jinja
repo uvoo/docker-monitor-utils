@@ -1,6 +1,7 @@
 {% if os == 'windows' and shell == 'pwsh' %}
 #Requires -RunAsAdministrator
 $ErrorActionPreference = "Stop"
+$dir="C:\app\zabbix"
 # Get-Location
 $svcName="Zabbix Agent 2"
 function getZabbixService(){
@@ -19,7 +20,6 @@ function getZabbixService(){
 
 function installZabbix(){
   $proxyToken="{{ PROXYTOKEN }}"
-  $dir="C:\app\zabbix"
   if(!(Test-Path -Path $dir )){
     New-Item -Path $dir
   }
