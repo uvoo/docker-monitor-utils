@@ -32,8 +32,7 @@ function installZabbix(){
   # zabbix_agent2.win.conf
   Start-Service "Zabbix Agent 2"
   Start-Sleep 5
-  # get-content .\zabbix_agent2.log -wait
-  Get-Content .\zabbix_agent2.log
+  Get-Content .\zabbix_agent2.log | Select -last 10  # -wait
   Get-Service -Name $svcName
   .\zabbix_agent2.exe -t vm.memory.size[available]
 }
