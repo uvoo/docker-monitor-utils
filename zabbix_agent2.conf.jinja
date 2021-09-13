@@ -13,7 +13,7 @@ LogFile=C:\app\zabbix\zabbix_agent2.log
 HostMetadata=
 HostMetadataItem=system.uname
 
-UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DEFAULT_DOMAIN }}\""
+UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
 UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias "Ethernet*").ifIndex).IPv4Address | Select -First 1"
 UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Invoke-WebRequest -uri "http://api.ipify.org" -UseBasicParsing).Content"
 UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
@@ -49,7 +49,7 @@ TLSAccept=psk
 TLSPSKIdentity={{ AUTOREGISTRATION_TLSPSKIDENTITY }}
 TLSPSKFile=/etc/zabbix/psk.key
 
-UserParameter=zbx.getDns, bash -c "hostname | awk '{print tolower($0)".{{ DEFAULT_DOMAIN }}"}'" 
+UserParameter=zbx.getDns, bash -c "hostname | awk '{print tolower($0)".{{ DOMAIN }}"}'" 
 UserParameter=zbx.getIpaddr, bash -c "ip route get 8.8.8.8 | awk -F\"src \" 'NR==1{split(\$2,a,\" \");print a[1]}'"  # https://stackoverflow.com/questions/21336126/linux-bash-script-to-extract-ip-address
 UserParameter=zbx.getPublicIpaddr, bash -c "curl -s https://api.ipify.org"
 UserParameter=zbx.getZabbixAgentVersion, bash -c "/usr/sbin/zabbix_agent2 --version | head -n 1"
