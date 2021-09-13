@@ -15,6 +15,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Run main.sh 
+        name: Run ci-main.sh 
         shell: bash
-        run: ./main.sh
+        run: ./ci-main.sh
