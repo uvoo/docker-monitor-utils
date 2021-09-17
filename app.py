@@ -410,7 +410,7 @@ def get_agent2conf():
     # app = request.args.get('app', type=str)
     # env = request.args.get('env', type=str)
     # group = request.args.get('group', type=str)
-    HostMetadata = request.args.get('HostMetadata', type=str)
+    HostMetadata = request.args.get('HostMetadata', default="", type=str)
     DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
     required_args = (os_)
     if any(i == None for i in required_args):
@@ -422,6 +422,9 @@ def get_agent2conf():
     targs['os'] = os_ 
     targs['shell'] = shell 
     targs['DOMAIN'] = DOMAIN 
+    targs['HostMetadata'] = HostMetadata
+    # :osname=Linux:hostgroup=MyPrimaryAdminGroup
+    # :osname=Windows:hostname=myhost:env=dev:app=iis:docker=no:primaryAdminGroup=red
     # targs['env'] = env 
     # targs['app'] = app 
     # targs['group'] = group 

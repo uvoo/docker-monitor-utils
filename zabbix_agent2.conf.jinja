@@ -11,7 +11,7 @@ TLSAccept=psk
 TLSPSKFile=C:\app\zabbix\psk.key
 LogFile=C:\app\zabbix\zabbix_agent2.log
 HostMetadata={{ HostMetadata }}
-# HostMetadataItem=system.uname
+HostMetadataItem=system.uname
 
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
 UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias "Ethernet*").ifIndex).IPv4Address | Select -First 1"
@@ -41,7 +41,7 @@ LogFile=/var/log/zabbix/zabbix_agent2.log
 LogFileSize=0
 ListenPort=10050
 HostMetadata={{ HostMetadata }}
-# HostMetadataItem=zbx.getHostMetadata
+HostMetadataItem=zbx.getHostMetadata
 Include=/etc/zabbix/zabbix_agent2.d/*.conf
 
 TLSConnect=psk
