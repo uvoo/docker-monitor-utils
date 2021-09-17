@@ -407,10 +407,11 @@ def download(name):
 def get_agent2conf():
     shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     os_ = request.args.get('os', default=DEFAULT_OS, type=str)
-    app = request.args.get('app', type=str)
-    env = request.args.get('env', type=str)
-    group = request.args.get('group', type=str)
-    DOMAIN = request.args.get('os', default=DEFAULT_DOMAIN, type=str)
+    # app = request.args.get('app', type=str)
+    # env = request.args.get('env', type=str)
+    # group = request.args.get('group', type=str)
+    HostMetadata = request.args.get('HostMetadata', default="", type=str)
+    DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
     required_args = (os_)
     if any(i == None for i in required_args):
         return "Missing required url args."
@@ -421,9 +422,12 @@ def get_agent2conf():
     targs['os'] = os_ 
     targs['shell'] = shell 
     targs['DOMAIN'] = DOMAIN 
-    targs['env'] = env 
-    targs['app'] = app 
-    targs['group'] = group 
+    targs['HostMetadata'] = HostMetadata
+    # :osname=Linux:hostgroup=MyPrimaryAdminGroup
+    # :osname=Windows:hostname=myhost:env=dev:app=iis:docker=no:primaryAdminGroup=red
+    # targs['env'] = env 
+    # targs['app'] = app 
+    # targs['group'] = group 
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
