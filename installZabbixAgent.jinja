@@ -24,6 +24,7 @@ function installZabbix(){
     New-Item -Path $dir
   }
   cd $dir
+  Write-Output "Downloading Zabbix Files"
   [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]'Tls,Tls11,Tls12'
   Invoke-WebRequest "{{ ZABBIX_URL }}/monitor-utils/downloads/zabbix_agent2.exe?proxyToken=$proxyToken" -outfile zabbix_agent2.exe
   Invoke-WebRequest "{{ ZABBIX_URL }}/monitor-utils/get/autoregistration/psk.key?proxyToken=$proxyToken" -outfile psk.key
