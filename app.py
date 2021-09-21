@@ -32,9 +32,9 @@ ZABBIX_AGENT_SERVERACTIVE = os.environ.get('ZABBIX_AGENT_SERVERACTIVE')
 AUTOREGISTRATION_TLSPSKIDENTITY = os.environ.get('AUTOREGISTRATION_TLSPSKIDENTITY', 'autoregistration--c811d00e-1495-11ec-88fc-3fadeb64ed55')
 AUTOREGISTRATION_TLSPSKVALUE = os.environ.get('AUTOREGISTRATION_TLSPSKVALUE', 'b473ce5b17bc1d20e92adc0a3e3f2325674ab3bad3f06946b410347b73f13c79')
 PROXYTOKEN = os.environ.get('PROXYTOKEN', "")
-DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
-DEFAULT_OS = os.environ.get('DEFAULT_OS', 'Linux')
-DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
+global DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
+global DEFAULT_OS = os.environ.get('DEFAULT_OS', 'Linux')
+global DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
 # ZABBIX_AGENT_WINDIR = os.environ.get('ZABBIX_AGENT_DIR', 'C:\opt\zabbix')
 # ZABBIX_AGENT_NIXDIR = os.environ.get('ZABBIX_AGENT_DIR', '/opt/zabbix')
 # APPLICATIONS_WINDIR = os.environ.get('APPLICATIONS_WINDIR', 'C:\opt')
@@ -415,7 +415,7 @@ def get_agent2conf():
         shell = "bash"
     else:
         shell = DEFAULT_SHELL
-        shell = DEFAULT_OS
+        os_ = DEFAULT_OS
     # app = request.args.get('app', type=str)
     # env = request.args.get('env', type=str)
     # group = request.args.get('group', type=str)
@@ -466,7 +466,9 @@ def getInstallZabbixAgent():
         shell = "bash"
     else:
         shell = DEFAULT_SHELL
-        shell = DEFAULT_OS
+        os_ = DEFAULT_OS
+        # shell = "pwsh" 
+        # os_ = "Windows" 
     targs = {}
     targs['ZABBIX_URL'] = ZABBIX_URL
     targs['PROXYTOKEN'] = PROXYTOKEN 
