@@ -33,7 +33,7 @@ AUTOREGISTRATION_TLSPSKIDENTITY = os.environ.get('AUTOREGISTRATION_TLSPSKIDENTIT
 AUTOREGISTRATION_TLSPSKVALUE = os.environ.get('AUTOREGISTRATION_TLSPSKVALUE', 'b473ce5b17bc1d20e92adc0a3e3f2325674ab3bad3f06946b410347b73f13c79')
 PROXYTOKEN = os.environ.get('PROXYTOKEN', "")
 DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
-DEFAULT_OS = os.environ.get('DEFAULT_OS', 'linux')
+DEFAULT_OS = os.environ.get('DEFAULT_OS', 'Linux')
 DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
 # ZABBIX_AGENT_WINDIR = os.environ.get('ZABBIX_AGENT_DIR', 'C:\opt\zabbix')
 # ZABBIX_AGENT_NIXDIR = os.environ.get('ZABBIX_AGENT_DIR', '/opt/zabbix')
@@ -405,14 +405,23 @@ def download(name):
 
 @app.route('/get/autoregistration/zabbix_agent2.conf', methods=['GET', 'POST'])
 def get_agent2conf():
-    shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
-    os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    # shell = request.args.get('shell')
+    # os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    if "Windows" in HostMetadata:
+        os_ = "Windows"
+        shell = "pwsh"
+    elif "Linux" in HostMetadata:
+        os_ = "Linux"
+        shell = "bash"
+    else:
+        shell = DEFAULT_SHELL
+        shell = DEFAULT_OS
     # app = request.args.get('app', type=str)
     # env = request.args.get('env', type=str)
     # group = request.args.get('group', type=str)
     HostMetadata = request.args.get('HostMetadata', default="", type=str)
     DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
-    required_args = (os_)
+    required_args = (HostMetadata)
     if any(i == None for i in required_args):
         return "Missing required url args."
     targs = {}
@@ -444,7 +453,8 @@ def get_agentpsk():
 def getInstallZabbixAgent():
     shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     os_ = request.args.get('os', default=DEFAULT_OS, type=str)
-    required_args = (shell, os_)
+    host_metadata = request.args.get('HostMetadata', type=str)
+    required_args = (shell, os_, HostMetaData)
     if any(i == None for i in required_args):
         return "Missing required url args."
     targs = {}
@@ -452,6 +462,7 @@ def getInstallZabbixAgent():
     targs['PROXYTOKEN'] = PROXYTOKEN 
     targs['shell'] = shell 
     targs['os'] = os_ 
+    targs['HostMetadata'] = host_metadata 
     with open('installZabbixAgent.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
