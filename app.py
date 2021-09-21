@@ -454,7 +454,7 @@ def getInstallZabbixAgent():
     # shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     # os_ = request.args.get('os', default=DEFAULT_OS, type=str)
     # required_args = (shell, os_, HostMetadata)
-    host_metadata = request.args.get('HostMetadata', type=str)
+    HostMetadata = request.args.get('HostMetadata', type=str)
     required_args = (HostMetadata)
     if any(i == None for i in required_args):
         return "Missing required url args: HostMetadata."
@@ -472,7 +472,7 @@ def getInstallZabbixAgent():
     targs['PROXYTOKEN'] = PROXYTOKEN 
     targs['shell'] = shell 
     targs['os'] = os_ 
-    targs['HostMetadata'] = host_metadata 
+    targs['HostMetadata'] = HostMetadata 
     with open('installZabbixAgent.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
