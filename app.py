@@ -454,7 +454,7 @@ def getInstallZabbixAgent():
     shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
     os_ = request.args.get('os', default=DEFAULT_OS, type=str)
     host_metadata = request.args.get('HostMetadata', type=str)
-    required_args = (shell, os_, HostMetaData)
+    required_args = (shell, os_, HostMetadata)
     if any(i == None for i in required_args):
         return "Missing required url args."
     targs = {}

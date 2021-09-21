@@ -20,7 +20,7 @@ function getZabbixService(){
 
 function installZabbix(){
   $proxyToken="{{ PROXYTOKEN }}"
-  $HostMetadata="{{ HostMetaData }}"
+  $HostMetadata="{{ HostMetadata }}"
   if(!(Test-Path -Path $dir )){
     New-Item -Path $dir
   }
