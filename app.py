@@ -423,7 +423,7 @@ def get_agent2conf():
     DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
     required_args = (HostMetadata)
     if any(i == None for i in required_args):
-        return "Missing required url args."
+        return "Missing required url args: HostMetadata."
     targs = {}
     targs['ZABBIX_AGENT_SERVERACTIVE'] = ZABBIX_AGENT_SERVERACTIVE 
     targs['ZABBIX_AGENT_SERVER'] = ZABBIX_AGENT_SERVER 
@@ -451,12 +451,22 @@ def get_agentpsk():
 
 @app.route('/get/autoregistration/installZabbixAgent', methods=['GET', 'POST'])
 def getInstallZabbixAgent():
-    shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
-    os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    # shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
+    # os_ = request.args.get('os', default=DEFAULT_OS, type=str)
+    # required_args = (shell, os_, HostMetadata)
     host_metadata = request.args.get('HostMetadata', type=str)
-    required_args = (shell, os_, HostMetadata)
+    required_args = (HostMetadata)
     if any(i == None for i in required_args):
-        return "Missing required url args."
+        return "Missing required url args: HostMetadata."
+    if "Windows" in HostMetadata:
+        os_ = "Windows"
+        shell = "pwsh"
+    elif "Linux" in HostMetadata:
+        os_ = "Linux"
+        shell = "bash"
+    else:
+        shell = DEFAULT_SHELL
+        shell = DEFAULT_OS
     targs = {}
     targs['ZABBIX_URL'] = ZABBIX_URL
     targs['PROXYTOKEN'] = PROXYTOKEN 
