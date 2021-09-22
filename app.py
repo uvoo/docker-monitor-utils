@@ -408,6 +408,11 @@ def download(name):
 
 @app.route('/get/autoregistration/zabbix_agent2.conf', methods=['GET', 'POST'])
 def get_agent2conf():
+    HostMetadata = request.args.get('HostMetadata', default="", type=str)
+    DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
+    required_args = (HostMetadata)
+    if any(i == None for i in required_args):
+        return "Missing required url args: HostMetadata."
     # shell = request.args.get('shell')
     # os_ = request.args.get('os', default=DEFAULT_OS, type=str)
     if "Windows" in HostMetadata:
@@ -422,11 +427,6 @@ def get_agent2conf():
     # app = request.args.get('app', type=str)
     # env = request.args.get('env', type=str)
     # group = request.args.get('group', type=str)
-    HostMetadata = request.args.get('HostMetadata', default="", type=str)
-    DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
-    required_args = (HostMetadata)
-    if any(i == None for i in required_args):
-        return "Missing required url args: HostMetadata."
     targs = {}
     targs['ZABBIX_AGENT_SERVERACTIVE'] = ZABBIX_AGENT_SERVERACTIVE 
     targs['ZABBIX_AGENT_SERVER'] = ZABBIX_AGENT_SERVER 
