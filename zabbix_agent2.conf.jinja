@@ -5,7 +5,7 @@ HostInterfaceItem=zbx.getIpaddr
 Server={{ ZABBIX_AGENT_SERVER }}
 ServerActive={{ ZABBIX_AGENT_SERVERACTIVE }}
 ControlSocket=\\.\pipe\agent.sock
-TLSPSKIdentity={{ AUTOREGISTRATION_TLSPSKIDENTITY }}
+TLSPSKIdentity={{ AUTOREG_TLSPSKIDENTITY }}
 TLSConnect=psk
 TLSAccept=psk
 TLSPSKFile=C:\app\zabbix\psk.key
@@ -47,7 +47,7 @@ Include=/etc/zabbix/zabbix_agent2.d/*.conf
 
 TLSConnect=psk
 TLSAccept=psk
-TLSPSKIdentity={{ AUTOREGISTRATION_TLSPSKIDENTITY }}
+TLSPSKIdentity={{ AUTOREG_TLSPSKIDENTITY }}
 TLSPSKFile=/etc/zabbix/psk.key
 
 UserParameter=zbx.getDns, bash -c "hostname | awk '{print tolower($0)".{{ DOMAIN }}"}'" 
