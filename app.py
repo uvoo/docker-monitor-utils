@@ -9,8 +9,7 @@ import uuid
 
 from flask import (Flask, request, abort, jsonify,
                    Response, send_from_directory, current_app)
-from jinja2 import Template
-import jinja2
+from jinja2 import Template, FileSystemLoader, Environment
 from pyzabbix import ZabbixAPI, ZabbixAPIException
 
 
@@ -39,16 +38,13 @@ global DEFAULT_SHELL
 DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
 DEFAULT_OS = os.environ.get('DEFAULT_OS', 'Linux')
 DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
-# ZABBIX_AGENT_WINDIR = os.environ.get('ZABBIX_AGENT_DIR', 'C:\opt\zabbix')
-# ZABBIX_AGENT_NIXDIR = os.environ.get('ZABBIX_AGENT_DIR', '/opt/zabbix')
-# APPLICATIONS_WINDIR = os.environ.get('APPLICATIONS_WINDIR', 'C:\opt')
-# APPLICATIONS_NIXDIR = os.environ.get('APPLICATIONS_NIXDIR', '/opt')
-required_args = (DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER,
-                 ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)
+
+required_args = (DEFAULT_DOMAIN, DEFAULT_OS, DEFAULT_SHELL,
+                 ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)
 if any(i is None for i in required_args):
     msg = ("E: Missing at least one required environmental variable"
-           "(DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER,"
-           "ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)")
+           "DEFAULT_DOMAIN, DEFAULT_OS, DEFAULT_SHELL,,"
+           "ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL")
     print(msg)
     sys.exit()
 
@@ -114,9 +110,9 @@ class Host:
 
         templateids = []
         if self.os == "windows":
-            templateids.append(10683)  # eh-template-windows-base
+            templateids.append(10683)  # set to your template id
         elif self.os == "linux":
-            templateids.append(10396)  # eh-template-linux-active-agent
+            templateids.append(10396)  # set to your template id
 
         query = {
             'host': str(self.hostname),
@@ -124,8 +120,6 @@ class Host:
             'proxy_hostid': '0',
             'status': '0',
             'interfaces': interface_list,
-            # 'templates': templates,
-            # 'templates': 10396,
             'tls_psk_identity': self.tlspskidentity,
             'tls_connect': 2,
             'tls_accept': 2,  # 4 is certificate
@@ -214,15 +208,14 @@ class Host:
         targs['AUTOREG_TLSPSKIDENTITY'] = AUTOREG_TLSPSKIDENTITY
 
         targs['os'] = self.os
-        templateLoader = jinja2.FileSystemLoader(searchpath="./")
-        templateEnv = jinja2.Environment(loader=templateLoader)
+        templateLoader = FileSystemLoader(searchpath="./")
+        templateEnv = Environment(loader=templateLoader)
         if self.os == "windows":
             install_template_file = "install-zabbix.ps1.jinja"
         elif self.os == "linux":
             tlspskfile = "/etc/zabbix/psk.key"
             targs['tlspskfile'] = tlspskfile
             install_template_file = "install-zabbix.sh.jinja"
-            # targs['tlspskfile'], self.tlspskfile
         else:
             print("Unsupported os")
             return
@@ -315,8 +308,6 @@ def create_agent_config_from_jinja(os_="windows"):
         template = Template(f_.read())
     txt = template.render(targs)
     print(txt)
-    # with open('downloads/psk.key', 'w') as f_:
-    #     f_.write(AUTOREG_TLSPSKVALUE)
 
 
 @app.route('/addhost')
@@ -393,14 +384,6 @@ def wagent_test_version():
     return jsonify(r)
 
 
-@app.route('/test-sandbox/foo')
-def test_json():
-    j = {}
-    j['foo'] = "one"
-    j['bar'] = "two"
-    return jsonify(j)
-
-
 @app.route('/agent/<path:name>')
 def agentconfig_dir(name):
     # agent = os.path.join(current_app.root_path, 'agent')
@@ -420,8 +403,6 @@ def get_agent2conf():
     required_args = (HostMetadata)
     if any(i is None for i in required_args):
         return "Missing required url args: HostMetadata."
-    # shell = request.args.get('shell')
-    # os_ = request.args.get('os', default=DEFAULT_OS, type=str)
     if "Windows" in HostMetadata:
         os_ = "Windows"
         shell = "pwsh"
@@ -431,9 +412,6 @@ def get_agent2conf():
     else:
         shell = DEFAULT_SHELL
         os_ = DEFAULT_OS
-    # app = request.args.get('app', type=str)
-    # env = request.args.get('env', type=str)
-    # group = request.args.get('group', type=str)
     targs = {}
     targs['ZABBIX_AGENT_SERVERACTIVE'] = ZABBIX_AGENT_SERVERACTIVE
     targs['ZABBIX_AGENT_SERVER'] = ZABBIX_AGENT_SERVER
@@ -442,11 +420,6 @@ def get_agent2conf():
     targs['shell'] = shell
     targs['DOMAIN'] = DOMAIN
     targs['HostMetadata'] = HostMetadata
-    # :osname=Linux:hostgroup=MyPrimaryAdminGroup
-    # :osname=Windows:hostname=myhost:env=dev:app=iis:docker=no:primaryAdminGroup=red
-    # targs['env'] = env
-    # targs['app'] = app
-    # targs['group'] = group
     with open('zabbix_agent2.conf.jinja') as f_:
         template = Template(f_.read())
     txt = template.render(targs)
@@ -461,9 +434,6 @@ def get_agentpsk():
 
 @app.route('/get/autoregistration/installZabbixAgent', methods=['GET', 'POST'])
 def getInstallZabbixAgent():
-    # shell = request.args.get('shell', default=DEFAULT_SHELL, type=str)
-    # os_ = request.args.get('os', default=DEFAULT_OS, type=str)
-    # required_args = (shell, os_, HostMetadata)
     HostMetadata = request.args.get('HostMetadata', type=str)
     required_args = (HostMetadata)
     if any(i is None for i in required_args):
@@ -477,8 +447,6 @@ def getInstallZabbixAgent():
     else:
         shell = DEFAULT_SHELL
         os_ = DEFAULT_OS
-        # shell = "pwsh"
-        # os_ = "Windows"
     targs = {}
     targs['ZABBIX_URL'] = ZABBIX_URL
     targs['PROXYTOKEN'] = PROXYTOKEN
@@ -497,5 +465,4 @@ def get_health():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=33222, ssl_context='adhoc')
     app.run(debug=True, host='0.0.0.0', port=80)
