@@ -2,6 +2,7 @@
 #Requires -RunAsAdministrator
 $ErrorActionPreference = "Stop"
 $dir="C:\app\zabbix"
+mkdir $dir 
 # Get-Location
 $svcName="Zabbix Agent 2"
 function getZabbixService(){
@@ -22,7 +23,7 @@ function installZabbix(){
   $proxyToken="{{ PROXYTOKEN }}"
   $HostMetadata="{{ HostMetadata }}"
   if(!(Test-Path -Path $dir )){
-    New-Item -Path $dir
+    New-Item -ItemType "directory" -Path "$dir" 
   }
   cd $dir
   Write-Output "Downloading Zabbix Files"
