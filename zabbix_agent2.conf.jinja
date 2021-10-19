@@ -11,7 +11,7 @@ TLSAccept=psk
 TLSPSKFile=C:\app\zabbix\psk.key
 LogFile=C:\app\zabbix\zabbix_agent2.log
 HostMetadata={{ HostMetadata }}
-HostMetadataItem=system.uname
+# HostMetadataItem=system.uname
 
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
 UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias "Ethernet*").ifIndex).IPv4Address | Select -First 1"
