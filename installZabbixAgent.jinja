@@ -171,6 +171,7 @@ function zabbix_redhat_based_install() {
   rm -f "${zabbix_pkg_filename}" || true
   curl -O "https://repo.zabbix.com/zabbix/${zabbix_version}/rhel/${VERSION_ID}/x86_64/${zabbix_pkg_filename}"
   sudo yum remove -y zabbix-agent2
+  sudo yum clean all
   sudo yum install -y ./${zabbix_pkg_filename} || true
   sudo yum install -y zabbix-agent2
 }
