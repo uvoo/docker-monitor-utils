@@ -18,8 +18,6 @@ COPY README.md .
 COPY  zabbix_agent2.conf.jinja .
 COPY  zabbix_agentd.conf.jinja .
 
-# CMD [ "python3", "app.py"]
-# CMD [ "gunicorn", "--workers", "4", "--access-logfile", "-", "--bind", "0.0.0.0:80" "wsgi:app"]
-RUN chmod +x main
-# ENTRYPOINT [ "bash", "-eux", "main" ]
-ENTRYPOINT [ ./main ]
+CMD [ "python3", "app.py"]
+# RUN chmod +x main
+# ENTRYPOINT [ ./main ]
