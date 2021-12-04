@@ -18,6 +18,6 @@ COPY README.md .
 COPY  zabbix_agent2.conf.jinja .
 COPY  zabbix_agentd.conf.jinja .
 
-CMD [ "python3", "app.py"]
-# RUN chmod +x main
-# ENTRYPOINT [ ./main ]
+# CMD [ "python3", "app.py"]
+RUN chmod +x main
+ENTRYPOINT [ ./main ]
