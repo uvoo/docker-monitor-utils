@@ -11,6 +11,7 @@ RUN pip3 install -r requirements.txt
 
 # COPY . .
 COPY app.py .
+COPY downloads/ . 
 COPY wsgi.py .
 COPY main .
 COPY README.md .
