@@ -462,3 +462,7 @@ def getInstallZabbixAgent():
 @app.route('/get/health', methods=['GET', 'POST'])
 def get_health():
     return Response("ok", mimetype='text/plain')
+
+
+if __name__ == '__main__':
+    app.run(debug=False, host='0.0.0.0', port=80)
