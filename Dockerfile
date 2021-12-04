@@ -16,7 +16,6 @@ COPY wsgi.py .
 COPY main .
 COPY README.md .
 COPY  zabbix_agent2.conf.jinja .
-COPY  zabbix_agentd.conf.jinja .
 
 # CMD [ "python3", "app.py"]
 RUN chmod +x main
