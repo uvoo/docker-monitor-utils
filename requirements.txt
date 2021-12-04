@@ -1,4 +1,5 @@
 flask
+gunicorn
 pip
 pyopenssl
 pyyaml
