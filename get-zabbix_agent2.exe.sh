@@ -2,9 +2,10 @@
 set -eux
 
 tmpdir=$(mktemp -d -t tmp-XXX)
-major=5
-minor=4
-patch=12
+# last: 5.4.12
+major=6
+minor=0
+patch=3
 release=$major.$minor.$patch
 archive_file=${tmpdir}/zabbix_agent2-${release}-windows-amd64-openssl-static.zip
 curl -L https://cdn.zabbix.com/zabbix/binaries/stable/${major}.${minor}/${release}/zabbix_agent2-${release}-windows-amd64-openssl-static.zip -o $archive_file 
