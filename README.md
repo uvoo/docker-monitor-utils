@@ -1,3 +1,13 @@
+# Updating Docker/Dockerhub image
+- Update major.minor.patch version (example 6.0.3) in get-zabbix_agent2.exe.sh
+- Run ./get-zabbix_agent2.exe.sh
+- Update major.minor version (example 6.0) in install-zabbix.sh.jinja
+- Merge changes to main branch
+
+
+
+
+# Usage
 Required env vars
 DEFAULT_DOMAIN, ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL
 
