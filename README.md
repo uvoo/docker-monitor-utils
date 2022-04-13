@@ -1,3 +1,5 @@
+NOTE: This only supports zabbix_agent2 agent for Linux & Windows
+
 # Updating Docker/Dockerhub image
 - Update major.minor.patch version (example 6.0.3) in get-zabbix_agent2.exe.sh
 - Run ./get-zabbix_agent2.exe.sh
