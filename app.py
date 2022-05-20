@@ -462,7 +462,8 @@ def getInstallZabbixAgent():
 @app.route('/get/health', methods=['GET', 'POST'])
 def get_health():
     return Response("ok", mimetype='text/plain')
-  
+
+
 @app.route('/', methods=['GET'])
 def get_root():
     return Response("ok", mimetype='text/plain')
