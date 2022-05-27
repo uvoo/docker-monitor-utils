@@ -152,6 +152,39 @@ class Host:
         else:
             self.os = "undetected"
 
+    def create_install_files(self):
+        if self.os == "windows":
+            if request.args.get("usechoco"):
+                with open('choco-install-cmd.txt', 'r') as f:
+                    txt = " ".join(line.rstrip() for line in f.readlines())
+                # /ENABLEREMOTECOMMANDS:1 ENABLEPATH:0
+                return Response(txt, mimetype='text/plain')
+            install_file = "install-zabbix.ps1.template"
+            with app.open_resource(install_file) as f:
+                txt = f.read()
+            txt = txt.decode()
+            txt = txt.replace("{{hostname}}", self.hostname)
+            txt = txt.replace("{{tlspskidentity}}", self.tlspskidentity)
+            txt = txt.replace("{{tlspskvalue}}", self.tlspskvalue)
+            return Response(txt, mimetype='text/plain')
+        elif self.os == "linux":
+            tlspskfile = "/etc/zabbix/psk.key"
+            install_file = "install-zabbix.sh.template"
+            with app.open_resource(install_file) as f:
+                txt = f.read()
+            txt = txt.decode()
+            txt = txt.replace("{{hostname}}", self.hostname)
+            txt = txt.replace("{{dns}}", self.dns)
+            txt = txt.replace("{{tlspskidentity}}", self.tlspskidentity)
+            txt = txt.replace("{{tlspskfile}}", tlspskfile)
+            txt = txt.replace("{{tlspskvalue}}", self.tlspskvalue)
+            return Response(txt, mimetype='text/plain')
+        elif self.os == "undetected":
+            txt = "Undetected OS please use arg os=windows or os=linux"
+            return Response(txt, mimetype='text/plain')
+        else:
+            txt = "Unsupported OS"
+            return Response(txt, mimetype='text/plain')
 
     def remove_config_files(self):
         hostname = self.hostuuid.split("--")[0]
@@ -162,7 +195,6 @@ class Host:
         dirs = [x for x in p if x.is_dir()]
         for dir in dirs:
             shutil.rmtree(dir)
-
 
     def write_host_config_files(self):
         targs = {}
