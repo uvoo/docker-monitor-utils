@@ -22,10 +22,10 @@ COPY installZabbixAgent.jinja .
 # this last might not be needed
 COPY zabbix_agent.conf.jinja .
 
-RUN groupadd -r app -g 1000 && useradd -u 1000 -r -g app -m -d /app -s /sbin/nologin -c "App user" app && \
-    chmod 755 /app
+# RUN groupadd -r app -g 1000 && useradd -u 1000 -r -g app -m -d /app -s /sbin/nologin -c "App user" app && \
+#    chmod 755 /app
 
-USER app
+# USER app
 
 CMD [ "python3", "app.py"]
 
