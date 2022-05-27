@@ -152,7 +152,6 @@ class Host:
         else:
             self.os = "undetected"
 
-
     def remove_config_files(self):
         hostname = self.hostuuid.split("--")[0]
         if len(hostname) < 4:
@@ -162,7 +161,6 @@ class Host:
         dirs = [x for x in p if x.is_dir()]
         for dir in dirs:
             shutil.rmtree(dir)
-
 
     def write_host_config_files(self):
         targs = {}
