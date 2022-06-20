@@ -5,7 +5,7 @@ echo "Style check."
 pip install flake8 && flake8 app.py
 
 echo "Build and push docker container to Dockerhub."
-release=0.1.0
+release=0.1.1
 docker build --tag uvoo/monitor-utils:latest --tag uvoo/monitor-utils:$release .
 echo Push to docker repo in 5 seconds; sleep 5
 echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
