@@ -368,6 +368,7 @@ def download(name):
 def get_agent2conf():
     HostMetadata = request.args.get('HostMetadata', default="", type=str)
     DOMAIN = request.args.get('domain', default=DEFAULT_DOMAIN, type=str)
+    AllowKey = request.args.get('AllowKey', default=DEFAULT_ALLOWKEY, type=str)
     required_args = (HostMetadata)
     if any(i is None for i in required_args):
         return "Missing required url args: HostMetadata."
@@ -381,6 +382,7 @@ def get_agent2conf():
         shell = DEFAULT_SHELL
         os_ = DEFAULT_OS
     targs = {}
+    targs['AllowKey'] = AllowKey
     targs['ZABBIX_AGENT_SERVERACTIVE'] = ZABBIX_AGENT_SERVERACTIVE
     targs['ZABBIX_AGENT_SERVER'] = ZABBIX_AGENT_SERVER
     targs['AUTOREG_TLSPSKIDENTITY'] = AUTOREG_TLSPSKIDENTITY
@@ -403,7 +405,6 @@ def get_agentpsk():
 @app.route('/get/autoregistration/installZabbixAgent', methods=['GET', 'POST'])
 def getInstallZabbixAgent():
     HostMetadata = request.args.get('HostMetadata', type=str)
-    AllowKey = request.args.get('AllowKey', default=DEFAULT_ALLOWKEY, type=str)
     required_args = (HostMetadata)
     if any(i is None for i in required_args):
         return "Missing required url args: HostMetadata."
@@ -421,7 +422,6 @@ def getInstallZabbixAgent():
     targs['PROXYTOKEN'] = PROXYTOKEN
     targs['shell'] = shell
     targs['os'] = os_
-    targs['AllowKey'] = AllowKey
     targs['HostMetadata'] = HostMetadata
     with open('installZabbixAgent.jinja') as f_:
         template = Template(f_.read())
