@@ -57,8 +57,10 @@ UserParameter=zbx.getZabbixAgentVersion, bash -c "/usr/sbin/zabbix_agent2 --vers
 UserParameter=zbx.getHostMetadata, bash -c "env={{ env }}; docker=no; app="{{ app }}"; group={{ group }}; hostname=$(hostname); os=$(uname); echo ":os=$os:hostname=$hostname:env=$env:app=$app:docker=$docker:primaryAdminGroup=$group"
 UserParameter=zbx.getFileSha1, bash -c "find /tmp/tmp -type f -print0  | xargs -0 sha1sum"
 
+{{ AllowKey }}
+
 # Examples
-AllowKey=system.run[*]
+# AllowKey=system.run[*]
 # DenyKey=system.run[*]
 # AllowKey=system.run[get-service]
 # AllowKey=system.run[hostname]
