@@ -19,6 +19,8 @@ UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Com
 UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
 UserParameter=zbx.getFileHash, powershell.exe -NonInteractive -NoProfile -Command "Get-ChildItem $1 -Recurse -File -Force -ea SilentlyContinue -ev errs | Get-FileHash -Algorithm SHA1"
 
+{{ AllowKey }}
+
 # Examples
 # AllowKey=system.run[*]
 # DenyKey=system.run[*]
