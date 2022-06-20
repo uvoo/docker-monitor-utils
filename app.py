@@ -38,6 +38,8 @@ global DEFAULT_SHELL
 DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
 DEFAULT_OS = os.environ.get('DEFAULT_OS', 'Linux')
 DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
+DEFAULT_ALLOWKEY = os.environ.get('DEFAULT_ALLOWKEY', 'AllowKey=system.run[*]')
+# https://www.zabbix.com/documentation/current/en/manual/config/items/restrict_checks
 
 required_args = (DEFAULT_DOMAIN, DEFAULT_OS, DEFAULT_SHELL,
                  ZABBIX_AGENT_SERVER, ZABBIX_AGENT_SERVERACTIVE, ZABBIX_URL)
@@ -401,6 +403,7 @@ def get_agentpsk():
 @app.route('/get/autoregistration/installZabbixAgent', methods=['GET', 'POST'])
 def getInstallZabbixAgent():
     HostMetadata = request.args.get('HostMetadata', type=str)
+    ALlowKey = request.args.get('AllowKey', default=DEFAULT_ALLOWKEY, type=str)
     required_args = (HostMetadata)
     if any(i is None for i in required_args):
         return "Missing required url args: HostMetadata."
@@ -418,6 +421,7 @@ def getInstallZabbixAgent():
     targs['PROXYTOKEN'] = PROXYTOKEN
     targs['shell'] = shell
     targs['os'] = os_
+    targs['AllowKey'] = AllowKey
     targs['HostMetadata'] = HostMetadata
     with open('installZabbixAgent.jinja') as f_:
         template = Template(f_.read())
