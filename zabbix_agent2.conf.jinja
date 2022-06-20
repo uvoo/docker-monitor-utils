@@ -19,6 +19,7 @@ UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Com
 UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
 UserParameter=zbx.getFileHash, powershell.exe -NonInteractive -NoProfile -Command "Get-ChildItem $1 -Recurse -File -Force -ea SilentlyContinue -ev errs | Get-FileHash -Algorithm SHA1"
 
+# Remote Commands
 {{ AllowKey }}
 
 # Examples
@@ -59,6 +60,7 @@ UserParameter=zbx.getZabbixAgentVersion, bash -c "/usr/sbin/zabbix_agent2 --vers
 UserParameter=zbx.getHostMetadata, bash -c "env={{ env }}; docker=no; app="{{ app }}"; group={{ group }}; hostname=$(hostname); os=$(uname); echo ":os=$os:hostname=$hostname:env=$env:app=$app:docker=$docker:primaryAdminGroup=$group"
 UserParameter=zbx.getFileSha1, bash -c "find /tmp/tmp -type f -print0  | xargs -0 sha1sum"
 
+# Remote Commands
 {{ AllowKey }}
 
 # Examples
