@@ -403,7 +403,7 @@ def get_agentpsk():
 @app.route('/get/autoregistration/installZabbixAgent', methods=['GET', 'POST'])
 def getInstallZabbixAgent():
     HostMetadata = request.args.get('HostMetadata', type=str)
-    ALlowKey = request.args.get('AllowKey', default=DEFAULT_ALLOWKEY, type=str)
+    AllowKey = request.args.get('AllowKey', default=DEFAULT_ALLOWKEY, type=str)
     required_args = (HostMetadata)
     if any(i is None for i in required_args):
         return "Missing required url args: HostMetadata."
