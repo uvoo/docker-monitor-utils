@@ -11,13 +11,16 @@ TLSAccept=psk
 TLSPSKFile=C:\app\zabbix\psk.key
 LogFile=C:\app\zabbix\zabbix_agent2.log
 HostMetadata={{ HostMetadata }}
-HostMetadataItem=system.uname
+# HostMetadataItem=system.uname
 
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
 UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias ("Ethernet*", "Data*")).ifIndex).IPv4Address | Select -First 1"
 UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Invoke-WebRequest -uri "http://api.ipify.org" -UseBasicParsing).Content"
 UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
 UserParameter=zbx.getFileHash, powershell.exe -NonInteractive -NoProfile -Command "Get-ChildItem $1 -Recurse -File -Force -ea SilentlyContinue -ev errs | Get-FileHash -Algorithm SHA1"
+
+# Remote Commands
+{{ AllowKey }}
 
 # Examples
 # AllowKey=system.run[*]
@@ -56,6 +59,9 @@ UserParameter=zbx.getPublicIpaddr, bash -c "curl -s https://api.ipify.org"
 UserParameter=zbx.getZabbixAgentVersion, bash -c "/usr/sbin/zabbix_agent2 --version | head -n 1"
 UserParameter=zbx.getHostMetadata, bash -c "env={{ env }}; docker=no; app="{{ app }}"; group={{ group }}; hostname=$(hostname); os=$(uname); echo ":os=$os:hostname=$hostname:env=$env:app=$app:docker=$docker:primaryAdminGroup=$group"
 UserParameter=zbx.getFileSha1, bash -c "find /tmp/tmp -type f -print0  | xargs -0 sha1sum"
+
+# Remote Commands
+{{ AllowKey }}
 
 # Examples
 # AllowKey=system.run[*]
