@@ -14,7 +14,7 @@ HostMetadata={{ HostMetadata }}
 # HostMetadataItem=system.uname
 
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
-UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias ('Ethernet*', 'Data*')).ifIndex).IPv4Address | Select -First 1"
+UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias ('Ethernet*', 'Data*', 'Vlan*', 'Voice*')).ifIndex).IPv4Address | Select -First 1"
 UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Invoke-WebRequest -uri "http://api.ipify.org" -UseBasicParsing).Content"
 UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
 UserParameter=zbx.getFileHash, powershell.exe -NonInteractive -NoProfile -Command "Get-ChildItem $1 -Recurse -File -Force -ea SilentlyContinue -ev errs | Get-FileHash -Algorithm SHA1"
