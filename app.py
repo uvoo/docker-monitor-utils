@@ -406,6 +406,7 @@ def get_agentpsk():
 def getInstallZabbixAgent():
     HostMetadata = request.args.get('HostMetadata', type=str)
     required_args = (HostMetadata)
+    AllowKey = request.args.get('AllowKey', default=DEFAULT_ALLOWKEY, type=str)
     if any(i is None for i in required_args):
         return "Missing required url args: HostMetadata."
     if "Windows" in HostMetadata:
@@ -418,6 +419,7 @@ def getInstallZabbixAgent():
         shell = DEFAULT_SHELL
         os_ = DEFAULT_OS
     targs = {}
+    targs['AllowKey'] = AllowKey
     targs['ZABBIX_URL'] = ZABBIX_URL
     targs['PROXYTOKEN'] = PROXYTOKEN
     targs['shell'] = shell
