@@ -38,7 +38,6 @@ global DEFAULT_SHELL
 DEFAULT_DOMAIN = os.environ.get('DEFAULT_DOMAIN')
 DEFAULT_OS = os.environ.get('DEFAULT_OS', 'Linux')
 DEFAULT_SHELL = os.environ.get('DEFAULT_SHELL', 'bash')
-# DEFAULT_ALLOWKEY = os.environ.get('DEFAULT_ALLOWKEY', 'AllowKey=system.run[*]')
 DEFAULT_ALLOWKEY = os.environ.get('DEFAULT_ALLOWKEY', 'system.run[*]')
 # https://www.zabbix.com/documentation/current/en/manual/config/items/restrict_checks
 
