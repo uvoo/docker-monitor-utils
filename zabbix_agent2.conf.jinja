@@ -20,7 +20,7 @@ UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfil
 UserParameter=zbx.getFileHash, powershell.exe -NonInteractive -NoProfile -Command "Get-ChildItem $1 -Recurse -File -Force -ea SilentlyContinue -ev errs | Get-FileHash -Algorithm SHA1"
 
 # Remote Commands
-{{ AllowKey }}
+AllowKey={{ AllowKey }}
 
 # Examples
 # AllowKey=system.run[*]
