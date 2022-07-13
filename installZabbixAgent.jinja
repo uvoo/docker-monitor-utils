@@ -21,7 +21,7 @@ function getZabbixService(){
 function installZabbix(){
   $proxyToken="{{ PROXYTOKEN }}"
   $HostMetadata="{{ HostMetadata }}"
-  AllowKey="{{ AllowKey }}"
+  $AllowKey="{{ AllowKey }}"
   if(!(Test-Path -Path $dir )){
     New-Item -ItemType "directory" -Path "$dir" 
   }
