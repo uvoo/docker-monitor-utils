@@ -14,7 +14,7 @@ HostMetadata={{ HostMetadata }}
 # HostMetadataItem=system.uname
 
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
-UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "$keySet = @{};:loop while ($true){$adapters = Get-NetAdapter -Physical | Get-NetAdapterStatistics;foreach ($adapter in $adapters){if (-not $keySet.ContainsKey($adapter.Name)) {$null = $keySet.Add($adapter.Name,$adapter.ReceivedBytes)};if ($adapter.ReceivedBytes -ne $keySet[$adapter.Name]) {$myip = Get-NetIPAddress -InterfaceAlias $adapter.Name;Write-Output -InputObject $myip.IpAddress;Break loop;}}}"
+UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command {$keySet = @{}; while ($true){$adapters = Get-NetAdapter -Physical | Get-NetAdapterStatistics;foreach ($adapter in $adapters){if (-not $keySet.ContainsKey($adapter.Name)) {$null = $keySet.Add($adapter.Name,$adapter.ReceivedBytes)};if ($adapter.ReceivedBytes -ne $keySet[$adapter.Name]) {$myip = Get-NetIPAddress -InterfaceAlias $adapter.Name;Write-Output -InputObject $myip.IpAddress;Break loop;}}} }
 UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Invoke-WebRequest -uri "http://api.ipify.org" -UseBasicParsing).Content"
 UserParameter=zbx.getZabbixAgentVersion,powershell.exe -NonInteractive -NoProfile -Command "/app/zabbix/zabbix_agent2.exe --version | Select -first 1"
 UserParameter=zbx.getFileHash, powershell.exe -NonInteractive -NoProfile -Command "Get-ChildItem $1 -Recurse -File -Force -ea SilentlyContinue -ev errs | Get-FileHash -Algorithm SHA1"
