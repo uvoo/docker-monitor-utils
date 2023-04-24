@@ -21,5 +21,6 @@ jobs:
         shell: bash
         run: ./ci-main.sh
         env:
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USERTOKEN: ${{ secrets.DOCKERHUB_USERTOKEN }}
