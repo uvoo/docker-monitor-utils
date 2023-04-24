@@ -13,7 +13,7 @@ LogFile=C:\app\zabbix\zabbix_agent2.log
 HostMetadata={{ HostMetadata }}
 # HostMetadataItem=system.uname
 
-UserParameter=check.url.http_code[*],powershell.exe -NonInteractive -NoProfile -Command "try { ($rsp = Invoke-WebRequest $1 ).StatusCode } catch { $_.Exception.Response.StatusCode.Value__ } "
+UserParameter=check.url.http_code[*],powershell.exe -NonInteractive -NoProfile -Command "try { (Invoke-WebRequest $1 -UseBasicParsing).StatusCode } catch { $_.Exception.Response.StatusCode.Value__}"
 UserParameter=check.url.time_total[*],powershell.exe -NonInteractive -NoProfile -Command "$url='$1'; (Measure-Command -Expression { $site = Invoke-WebRequest -Uri $url -UseBasicParsing }).Milliseconds"
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
 UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias "Ethernet*").ifIndex).IPv4Address | Select -First 1"
