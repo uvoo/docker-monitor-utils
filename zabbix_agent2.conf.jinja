@@ -13,6 +13,8 @@ LogFile=C:\app\zabbix\zabbix_agent2.log
 HostMetadata={{ HostMetadata }}
 # HostMetadataItem=system.uname
 
+UserParameter=check.url.http_code[*],powershell.exe -NonInteractive -NoProfile -Command "try { ($rsp = Invoke-WebRequest $1 ).StatusCode } catch { $_.Exception.Response.StatusCode.Value__ } "
+UserParameter=check.url.time_total[*],powershell.exe -NonInteractive -NoProfile -Command "$url='$1'; (Measure-Command -Expression { $site = Invoke-WebRequest -Uri $url -UseBasicParsing }).Milliseconds"
 UserParameter=zbx.getDns,powershell.exe -NonInteractive -NoProfile -Command "(hostname).ToLower()+\".{{ DOMAIN }}\""
 UserParameter=zbx.getIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Get-NetIPAddress -InterfaceIndex (Get-NetIPInterface -ConnectionState Connected -InterfaceAlias "Ethernet*").ifIndex).IPv4Address | Select -First 1"
 UserParameter=zbx.getPublicIpaddr,powershell.exe -NonInteractive -NoProfile -Command "(Invoke-WebRequest -uri "http://api.ipify.org" -UseBasicParsing).Content"
@@ -53,6 +55,8 @@ TLSAccept=psk
 TLSPSKIdentity={{ AUTOREG_TLSPSKIDENTITY }}
 TLSPSKFile=/etc/zabbix/psk.key
 
+UserParameter=check.url.http_code[*],curl -s -o /dev/null -w '%{http_code}' $1
+UserParameter=check.url.time_total[*],curl -s -o /dev/null -w '%{time_total}' $1
 UserParameter=zbx.getDns, bash -c "hostname | awk '{print tolower($0)".{{ DOMAIN }}"}'" 
 UserParameter=zbx.getIpaddr, bash -c "ip route get 8.8.8.8 | awk -F\"src \" 'NR==1{split(\$2,a,\" \");print a[1]}'"  # https://stackoverflow.com/questions/21336126/linux-bash-script-to-extract-ip-address
 UserParameter=zbx.getPublicIpaddr, bash -c "curl -s https://api.ipify.org"
