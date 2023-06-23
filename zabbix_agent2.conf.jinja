@@ -65,7 +65,7 @@ UserParameter=zbx.getHostMetadata, bash -c "env={{ env }}; docker=no; app="{{ ap
 UserParameter=zbx.getFileSha1, bash -c "find /tmp/tmp -type f -print0  | xargs -0 sha1sum"
 
 # Remote Commands
-{{ AllowKey }}
+AllowKey={{ AllowKey }}
 
 # Examples
 # AllowKey=system.run[*]
