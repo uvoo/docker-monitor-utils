@@ -178,7 +178,6 @@ function zabbix_redhat_based_install() {
   curl -O "https://repo.zabbix.com/zabbix/${zabbix_version}/rhel/${VERSION_ID}/x86_64/${zabbix_pkg_filename}"
   sudo yum remove -y zabbix-agent2
   sudo yum clean all
-  sudo rpm -Uvh http://mirror.centos.org/centos/7/os/x86_64/Packages/pcre2-10.23-2.el7.x86_64.rpm
   sudo yum install -y ./${zabbix_pkg_filename} || true
   sudo yum install -y zabbix-agent2
 }
